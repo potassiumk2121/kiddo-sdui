@@ -29,3 +29,17 @@ export function resolveProductSource(source: string | undefined): Product[] {
       return [];
   }
 }
+
+const BASE_PRODUCTS = [
+  ...SCHOOL_PRODUCTS,
+  ...PLAYHOUSE_PRODUCTS,
+  ...CARNIVAL_PRODUCTS,
+];
+
+export function resolveProductById(productId: string): Product | undefined {
+  const exact = BASE_PRODUCTS.find((product) => product.id === productId);
+  if (exact) return exact;
+
+  const baseId = productId.replace(/-\d+$/, '');
+  return BASE_PRODUCTS.find((product) => product.id === baseId);
+}

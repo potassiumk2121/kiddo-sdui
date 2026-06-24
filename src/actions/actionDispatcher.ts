@@ -1,18 +1,8 @@
 import { Alert, Linking } from 'react-native';
-import { SDUIAction } from '../types/sdui';
-import { useCartStore } from '../store/cartStore';
+import { resolveProductById } from '../data/productResolver';
 import { useCampaignStore } from '../store/campaignStore';
-
-/**
- * Universal Action Dispatcher.
- *
- * Every component delegates side-effects to `handleAction`. This keeps
- * components dumb (UI only) and makes the SDUI payload portable —
- * the JSON can drive any side-effect without component changes.
- *
- * To add a new action: extend `ActionType` in types/sdui.ts and add a
- * handler in the switch below. No component code needs to change.
- */
+import { useCartStore } from '../store/cartStore';
+import { SDUIAction } from '../types/sdui';
 
 type Handler = (action: SDUIAction) => void;
 
@@ -36,19 +26,25 @@ const handlers: Record<string, Handler> = {
       if (supported) {
         Linking.openURL(url);
       } else {
-        Alert.alert('Deep Link', `Would navigate to: ${url}`);
+        Alert.alert('Navigation', `Would open: ${url}`);
       }
     });
   },
 
   OPEN_PRODUCT: (action) => {
     const productId = action.payload?.productId as string | undefined;
-    Alert.alert('Product', `Open product detail: ${productId ?? 'unknown'}`);
+    const product = productId ? resolveProductById(productId) : undefined;
+    Alert.alert(
+      product?.title ?? 'Product details',
+      product
+        ? `$${product.price.toFixed(2)} - Added to today's curated collection.`
+        : `Product ID: ${productId ?? 'unknown'}`,
+    );
   },
 
   APPLY_COUPON: (action) => {
     const code = (action.payload?.code as string | undefined) ?? 'MYSTERY';
-    Alert.alert('🎁 Coupon Applied', `Code: ${code}`);
+    Alert.alert('Coupon applied', `Code: ${code}`);
   },
 
   SWITCH_CAMPAIGN: (action) => {
@@ -58,8 +54,7 @@ const handlers: Record<string, Handler> = {
   },
 
   DISMISS_OVERLAY: () => {
-    // Overlays manage their own visibility via local state — this is a hook
-    // point for analytics or future global overlay state.
+    // Hook point for analytics or future global overlay state.
   },
 
   NOOP: () => {},

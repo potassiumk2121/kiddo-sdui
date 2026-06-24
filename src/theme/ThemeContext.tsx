@@ -2,13 +2,13 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { ThemeConfig } from '../types/sdui';
 
 const DEFAULT_THEME: ThemeConfig = {
-  primary: '#FF9933',
-  secondary: '#005EB8',
-  background: '#FFF5E6',
+  primary: '#2563EB',
+  secondary: '#8B5CF6',
+  background: '#F6FAFF',
   surface: '#FFFFFF',
-  text: '#1A1A1A',
-  textMuted: '#666666',
-  accent: '#FFD700',
+  text: '#122033',
+  textMuted: '#64748B',
+  accent: '#FFD166',
 };
 
 interface ThemeContextValue {

@@ -2,13 +2,13 @@
   "campaignId": "mystery_gift_carnival",
   "campaignName": "Mystery Gift Carnival",
   "theme": {
-    "primary": "#D7263D",
-    "secondary": "#F46036",
-    "background": "#2E1A47",
-    "surface": "#3D2459",
-    "text": "#FFFFFF",
-    "textMuted": "#D9CFE8",
-    "accent": "#FFD23F"
+    "primary": "#2563EB",
+    "secondary": "#F97316",
+    "background": "#F8FBFF",
+    "surface": "#FFFFFF",
+    "text": "#122033",
+    "textMuted": "#64748B",
+    "accent": "#FFD166"
   },
   "components": [
     {
@@ -17,7 +17,7 @@
       "props": {
         "title": "Mystery Gift Carnival",
         "subtitle": "Tap to claim your surprise!",
-        "imageUrl": "https://picsum.photos/seed/carnival-hero/800/400",
+        "imageUrl": "https://placehold.co/1400x520/F5E8FF/17324D.png?text=Mystery%20Gift%20Carnival",
         "cta": {
           "label": "Claim Mystery Coupon",
           "action": {

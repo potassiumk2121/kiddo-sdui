@@ -2,13 +2,13 @@
   "campaignId": "back_to_school",
   "campaignName": "Back To School",
   "theme": {
-    "primary": "#FFC72C",
-    "secondary": "#0057B8",
-    "background": "#FFF8DC",
+    "primary": "#2563EB",
+    "secondary": "#8B5CF6",
+    "background": "#F6FAFF",
     "surface": "#FFFFFF",
-    "text": "#0A2540",
-    "textMuted": "#5C6B7A",
-    "accent": "#0057B8"
+    "text": "#122033",
+    "textMuted": "#64748B",
+    "accent": "#FFD166"
   },
   "components": [
     {
@@ -17,7 +17,7 @@
       "props": {
         "title": "Back To School Sale",
         "subtitle": "Up to 40% off lunchboxes & backpacks",
-        "imageUrl": "https://picsum.photos/seed/school-hero/800/400",
+        "imageUrl": "https://placehold.co/1400x520/DCEBFF/17324D.png?text=Back%20To%20School%20Essentials",
         "cta": {
           "label": "Shop Now",
           "action": {

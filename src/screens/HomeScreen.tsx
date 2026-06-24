@@ -1,34 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
-import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SDUINode } from '../types/sdui';
-import { useActiveComponents } from '../store/campaignStore';
-import { useTheme } from '../theme/ThemeContext';
-import { SectionRenderer } from '../components/SectionRenderer';
 import { CartCounter } from '../components/CartCounter';
 import { CampaignSwitcher } from '../components/CampaignSwitcher';
+import { SectionRenderer } from '../components/SectionRenderer';
+import { useActiveComponents } from '../store/campaignStore';
+import { SDUINode } from '../types/sdui';
+import { useTheme } from '../theme/ThemeContext';
 
-/**
- * HomeScreen
- *
- * The entire homepage is rendered as ONE FlashList. Each row is a SDUI node.
- *
- * Performance contract:
- *   - FlashList with `estimatedItemSize` for virtualization.
- *   - `renderItem` and `keyExtractor` are stable callbacks (useCallback).
- *   - `SectionRenderer` is memoized on node identity → cart updates DON'T
- *     re-render the feed; only the touched ProductCard + CartCounter update.
- *   - Overlays render in a separate absolutely-positioned layer with
- *     pointerEvents="none" so they never block the feed.
- *
- * Overlays are filtered OUT of the FlashList data and rendered as a sibling
- * layer — this keeps the list pure (one item type) and prevents the overlay
- * from claiming list space.
- */
 export const HomeScreen: React.FC = () => {
   const theme = useTheme();
   const components = useActiveComponents();
+  const { width } = useWindowDimensions();
+  const isWide = width >= 720;
 
   const { feed, overlays } = useMemo(() => {
     const f: SDUINode[] = [];
@@ -47,25 +32,23 @@ export const HomeScreen: React.FC = () => {
 
   const keyExtractor = useCallback((item: SDUINode) => item.id, []);
 
-  // FlashList wants a per-type override only when row types vary in size.
-  // We provide it to let the recycler pool match heights better.
   const overrideItemLayout = useCallback(
     (layout: { size?: number }, item: SDUINode) => {
       switch (item.type) {
         case 'BANNER_HERO':
-          layout.size = 220;
+          layout.size = isWide ? 300 : 246;
           break;
         case 'PRODUCT_GRID_2X2':
-          layout.size = 480;
+          layout.size = isWide ? 390 : 470;
           break;
         case 'DYNAMIC_COLLECTION':
-          layout.size = 260;
+          layout.size = 330;
           break;
         default:
           layout.size = 100;
       }
     },
-    [],
+    [isWide],
   );
 
   return (
@@ -73,25 +56,42 @@ export const HomeScreen: React.FC = () => {
       style={[styles.safe, { backgroundColor: theme.background }]}
       edges={['top']}
     >
-      <StatusBar
-        barStyle={
-          // Dark text on light backgrounds (carnival has a dark bg though)
-          theme.background.toLowerCase() === '#2e1a47'
-            ? 'light-content'
-            : 'dark-content'
-        }
-      />
+      <StatusBar barStyle="dark-content" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.brand, { color: theme.text }]}>SDUI Shop</Text>
-        <CartCounter />
+      <View style={[styles.header, { backgroundColor: theme.background }]}>
+        <View style={styles.headerInner}>
+          <View style={styles.brandCluster}>
+            <View style={[styles.logoMark, { backgroundColor: theme.primary }]}>
+              <Text style={styles.logoText}>K</Text>
+            </View>
+            <View style={styles.brandCopy}>
+              <Text style={[styles.brand, { color: theme.text }]}>
+                Kiddo Shop
+              </Text>
+              <Text style={[styles.brandSub, { color: theme.textMuted }]}>
+                Premium picks for kids
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.headerActions}>
+            {isWide ? (
+              <View style={[styles.deliveryPill, { backgroundColor: theme.surface }]}>
+                <Text style={[styles.deliveryTitle, { color: theme.text }]}>
+                  Delivery in 10 mins
+                </Text>
+                <Text style={[styles.deliverySub, { color: theme.textMuted }]}>
+                  Fresh deals today
+                </Text>
+              </View>
+            ) : null}
+            <CartCounter />
+          </View>
+        </View>
       </View>
 
-      {/* Campaign switcher (driven from JSON config) */}
       <CampaignSwitcher />
 
-      {/* Single feed */}
       <FlashList
         data={feed}
         renderItem={renderItem}
@@ -102,7 +102,6 @@ export const HomeScreen: React.FC = () => {
         contentContainerStyle={styles.listContent}
       />
 
-      {/* Overlay layer — non-blocking */}
       {overlays.map((node) => (
         <SectionRenderer key={node.id} node={node} />
       ))}
@@ -113,12 +112,88 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   header: {
+    zIndex: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(148,163,184,0.18)',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 18,
+    elevation: 3,
+  },
+  headerInner: {
+    width: '100%',
+    maxWidth: 1180,
+    alignSelf: 'center',
+    minHeight: 72,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    gap: 14,
   },
-  brand: { fontSize: 22, fontWeight: '800' },
-  listContent: { paddingBottom: 24 },
+  brandCluster: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 1,
+    gap: 11,
+  },
+  logoMark: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 14,
+    elevation: 3,
+  },
+  logoText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  brandCopy: { minWidth: 0 },
+  brand: {
+    fontSize: 23,
+    lineHeight: 28,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  brandSub: {
+    marginTop: 1,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  deliveryPill: {
+    minWidth: 174,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E5EEF9',
+  },
+  deliveryTitle: {
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  deliverySub: {
+    marginTop: 1,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  listContent: {
+    paddingBottom: 28,
+  },
 });

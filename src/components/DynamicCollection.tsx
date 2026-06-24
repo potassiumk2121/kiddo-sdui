@@ -1,29 +1,31 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
+import {
+  FlatList,
+  ListRenderItem,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { resolveProductSource } from '../data/productResolver';
 import { DynamicCollectionProps, Product } from '../types/sdui';
 import { useTheme } from '../theme/ThemeContext';
 import { ProductCard } from './ProductCard';
-import { resolveProductSource } from '../data/productResolver';
 
 interface RawProps extends Omit<DynamicCollectionProps, 'products'> {
   products?: Product[];
   productSource?: string;
 }
 
-const CARD_WIDTH = 150;
+const MAX_CONTENT_WIDTH = 1180;
+const HORIZONTAL_PADDING = 16;
+const CARD_GAP = 14;
 
-/**
- * Horizontal scrolling product list. Lives inside the vertical FlashList feed.
- *
- * Performance notes:
- *  - Uses `FlatList` (horizontal) with `removeClippedSubviews`,
- *    `initialNumToRender`, and `windowSize` tuned for smooth scroll.
- *  - `getItemLayout` skips measurement → constant-time scroll-to-index.
- *  - `renderItem` and `keyExtractor` are stable (useCallback).
- *  - Cards are memoized; only the touched card re-renders on cart change.
- */
 function DynamicCollectionImpl(props: RawProps) {
   const theme = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
+  const cardWidth = screenWidth >= 900 ? 178 : 154;
+  const snapInterval = cardWidth + CARD_GAP;
 
   const products = useMemo<Product[]>(() => {
     if (props.products && props.products.length > 0) return props.products;
@@ -33,42 +35,56 @@ function DynamicCollectionImpl(props: RawProps) {
 
   const renderItem = useCallback<ListRenderItem<Product>>(
     ({ item }) => (
-      <View style={styles.cardWrap}>
-        <ProductCard product={item} width={CARD_WIDTH} />
+      <View style={[styles.cardWrap, { width: cardWidth, marginRight: CARD_GAP }]}>
+        <ProductCard product={item} width={cardWidth} />
       </View>
     ),
-    [],
+    [cardWidth],
   );
 
   const keyExtractor = useCallback((item: Product) => item.id, []);
 
   const getItemLayout = useCallback(
     (_data: ArrayLike<Product> | null | undefined, index: number) => ({
-      length: CARD_WIDTH + 12,
-      offset: (CARD_WIDTH + 12) * index,
+      length: snapInterval,
+      offset: snapInterval * index,
       index,
     }),
-    [],
+    [snapInterval],
   );
 
   if (products.length === 0) return null;
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.text }]}>{props.title}</Text>
-      <FlatList
-        horizontal
-        data={products}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        showsHorizontalScrollIndicator={false}
-        initialNumToRender={4}
-        maxToRenderPerBatch={6}
-        windowSize={5}
-        removeClippedSubviews
-        contentContainerStyle={styles.listContent}
-      />
+      <View style={styles.inner}>
+        <View style={styles.headingRow}>
+          <View>
+            <Text style={[styles.eyebrow, { color: theme.primary }]}>
+              More to explore
+            </Text>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {props.title}
+            </Text>
+          </View>
+          <Text style={[styles.hint, { color: theme.textMuted }]}>Popular</Text>
+        </View>
+        <FlatList
+          horizontal
+          data={products}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
+          showsHorizontalScrollIndicator={false}
+          initialNumToRender={5}
+          maxToRenderPerBatch={7}
+          windowSize={5}
+          removeClippedSubviews
+          snapToInterval={snapInterval}
+          decelerationRate="fast"
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
     </View>
   );
 }
@@ -76,13 +92,48 @@ function DynamicCollectionImpl(props: RawProps) {
 export const DynamicCollection = memo(DynamicCollectionImpl);
 
 const styles = StyleSheet.create({
-  container: { paddingTop: 8 },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-    paddingHorizontal: 12,
+  container: {
+    paddingTop: 14,
+    paddingBottom: 18,
   },
-  listContent: { paddingHorizontal: 12 },
-  cardWrap: { width: CARD_WIDTH, marginRight: 12 },
+  inner: {
+    width: '100%',
+    maxWidth: MAX_CONTENT_WIDTH,
+    alignSelf: 'center',
+  },
+  headingRow: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 12,
+    paddingHorizontal: HORIZONTAL_PADDING,
+  },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  title: {
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  hint: {
+    fontSize: 12,
+    fontWeight: '800',
+    paddingBottom: 3,
+  },
+  listContent: {
+    paddingLeft: HORIZONTAL_PADDING,
+    paddingRight: 2,
+  },
+  cardWrap: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
 });

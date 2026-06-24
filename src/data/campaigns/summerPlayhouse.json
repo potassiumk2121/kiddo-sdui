@@ -2,13 +2,13 @@
   "campaignId": "summer_playhouse",
   "campaignName": "Summer Playhouse",
   "theme": {
-    "primary": "#0091D5",
-    "secondary": "#00C2B8",
-    "background": "#E6F7FB",
+    "primary": "#0891B2",
+    "secondary": "#22C55E",
+    "background": "#F4FBFF",
     "surface": "#FFFFFF",
-    "text": "#003B5C",
-    "textMuted": "#4A7A8C",
-    "accent": "#FFB400"
+    "text": "#123047",
+    "textMuted": "#64748B",
+    "accent": "#FFE08A"
   },
   "components": [
     {
@@ -17,7 +17,7 @@
       "props": {
         "title": "Summer Playhouse",
         "subtitle": "Splash into savings & family fun",
-        "imageUrl": "https://picsum.photos/seed/summer-hero/800/400",
+        "imageUrl": "https://placehold.co/1400x520/DDF7FF/123047.png?text=Summer%20Playhouse%20Deals",
         "cta": {
           "label": "Get Tickets",
           "action": {
