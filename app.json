@@ -6,6 +6,9 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
+    "updates": {
+      "enabled": false
+    },
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
