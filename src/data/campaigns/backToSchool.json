@@ -1,0 +1,55 @@
+{
+  "campaignId": "back_to_school",
+  "campaignName": "Back To School",
+  "theme": {
+    "primary": "#FFC72C",
+    "secondary": "#0057B8",
+    "background": "#FFF8DC",
+    "surface": "#FFFFFF",
+    "text": "#0A2540",
+    "textMuted": "#5C6B7A",
+    "accent": "#0057B8"
+  },
+  "components": [
+    {
+      "id": "hero-1",
+      "type": "BANNER_HERO",
+      "props": {
+        "title": "Back To School Sale",
+        "subtitle": "Up to 40% off lunchboxes & backpacks",
+        "imageUrl": "https://picsum.photos/seed/school-hero/800/400",
+        "cta": {
+          "label": "Shop Now",
+          "action": {
+            "type": "DEEP_LINK",
+            "payload": { "url": "myapp://collections/school" }
+          }
+        }
+      }
+    },
+    {
+      "id": "grid-school",
+      "type": "PRODUCT_GRID_2X2",
+      "props": {
+        "title": "Lunchboxes & Bags",
+        "productSource": "school"
+      }
+    },
+    {
+      "id": "coll-school",
+      "type": "DYNAMIC_COLLECTION",
+      "props": {
+        "title": "Top Picks For School",
+        "productSource": "school-long"
+      }
+    },
+    {
+      "id": "overlay-school",
+      "type": "FULL_SCREEN_OVERLAY",
+      "props": {
+        "animationType": "sparkle",
+        "durationMs": 3500
+      }
+    }
+  ]
+}

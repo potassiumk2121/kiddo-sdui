@@ -1,0 +1,62 @@
+{
+  "campaignId": "summer_playhouse",
+  "campaignName": "Summer Playhouse",
+  "theme": {
+    "primary": "#0091D5",
+    "secondary": "#00C2B8",
+    "background": "#E6F7FB",
+    "surface": "#FFFFFF",
+    "text": "#003B5C",
+    "textMuted": "#4A7A8C",
+    "accent": "#FFB400"
+  },
+  "components": [
+    {
+      "id": "hero-2",
+      "type": "BANNER_HERO",
+      "props": {
+        "title": "Summer Playhouse",
+        "subtitle": "Splash into savings & family fun",
+        "imageUrl": "https://picsum.photos/seed/summer-hero/800/400",
+        "cta": {
+          "label": "Get Tickets",
+          "action": {
+            "type": "DEEP_LINK",
+            "payload": { "url": "myapp://collections/playhouse" }
+          }
+        }
+      }
+    },
+    {
+      "id": "grid-playhouse",
+      "type": "PRODUCT_GRID_2X2",
+      "props": {
+        "title": "Petting Zoo Tickets",
+        "productSource": "playhouse"
+      }
+    },
+    {
+      "id": "coll-playhouse",
+      "type": "DYNAMIC_COLLECTION",
+      "props": {
+        "title": "Splash Essentials",
+        "productSource": "playhouse-long"
+      }
+    },
+    {
+      "id": "overlay-playhouse",
+      "type": "FULL_SCREEN_OVERLAY",
+      "props": {
+        "animationType": "water-splash",
+        "durationMs": 3500
+      }
+    },
+    {
+      "id": "experimental-1",
+      "type": "EXPERIMENTAL_WIDGET",
+      "props": {
+        "note": "This unknown type should render nothing (graceful fallback)."
+      }
+    }
+  ]
+}

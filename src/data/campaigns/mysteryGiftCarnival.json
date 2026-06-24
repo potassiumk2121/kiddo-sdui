@@ -1,0 +1,55 @@
+{
+  "campaignId": "mystery_gift_carnival",
+  "campaignName": "Mystery Gift Carnival",
+  "theme": {
+    "primary": "#D7263D",
+    "secondary": "#F46036",
+    "background": "#2E1A47",
+    "surface": "#3D2459",
+    "text": "#FFFFFF",
+    "textMuted": "#D9CFE8",
+    "accent": "#FFD23F"
+  },
+  "components": [
+    {
+      "id": "hero-3",
+      "type": "BANNER_HERO",
+      "props": {
+        "title": "Mystery Gift Carnival",
+        "subtitle": "Tap to claim your surprise!",
+        "imageUrl": "https://picsum.photos/seed/carnival-hero/800/400",
+        "cta": {
+          "label": "Claim Mystery Coupon",
+          "action": {
+            "type": "APPLY_COUPON",
+            "payload": { "code": "MYSTERY50" }
+          }
+        }
+      }
+    },
+    {
+      "id": "grid-carnival",
+      "type": "PRODUCT_GRID_2X2",
+      "props": {
+        "title": "Mystery Boxes",
+        "productSource": "carnival"
+      }
+    },
+    {
+      "id": "coll-carnival",
+      "type": "DYNAMIC_COLLECTION",
+      "props": {
+        "title": "Carnival Favorites",
+        "productSource": "carnival-long"
+      }
+    },
+    {
+      "id": "overlay-carnival",
+      "type": "FULL_SCREEN_OVERLAY",
+      "props": {
+        "animationType": "confetti",
+        "durationMs": 4000
+      }
+    }
+  ]
+}
